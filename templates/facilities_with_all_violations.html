@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facilities with All Violations</title>
+    <title>Facilities with Violations</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -33,7 +33,15 @@
 </head>
 <body>
     <div class="container">
-        <h1>Facilities with All Violations</h1>
+        <h1>
+            Facilities with {% if Tag == "A" %}
+                              Type A
+            {% elif Tag == "B" %}
+                              Type B
+            {% else %}
+                              both
+            {% endif %} Violations
+        </h1>
         <ul class="facilities">
             {% for facility in facilities %}
                 <li>Facility Number: {{ facility.Facility_Number }}</li>

@@ -29,6 +29,11 @@
             display: flex;
             justify-content: space-between;
         }
+        .button-group-2 {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
         /* Style for border */
         .button-separator {
             border-top: 1px solid #ccc;
@@ -130,10 +135,17 @@
                 <button type="button" id="updateBtn" onclick="window.location.href='/update/' + document.getElementById('Facility_Number').value">Update</button>
                 <button type="button" id="deleteBtn" onclick="confirmDelete()">Delete</button>            
             </div>
-            
-            <!-- Inside the existing form or at an appropriate place in index.html -->
-            <div class="section">
-                <button type="button" onclick="window.location.href='/facilities_with_all_violations'">View Facilities with All Violations</button>
+
+            <div class="button-group-2">
+                <div class="section">
+                    <button type="button" onclick="window.location.href='/facilities_with_all_violations/A'">View Facilities with Type A Violations</button>
+                </div>
+                <div class="section">
+                    <button type="button" onclick="window.location.href='/facilities_with_all_violations/B'">View Facilities with Type B Violations</button>
+                </div>
+                <div class="section">
+                    <button type="button" onclick="window.location.href='/facilities_with_all_violations/C'">View Facilities with both Violations</button>
+                </div>
             </div>
 
         </form>

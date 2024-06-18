@@ -111,16 +111,31 @@ def delete_site_visit_notice(Facility_Number):
     conn.commit()
     conn.close()
 
-def get_facilities_with_all_violations():
+def get_facilities_with_all_violations(Tag = ""):
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("""
-        SELECT Facility_Number
-        FROM Site_Visit_Notice
-        WHERE Regulatory_Violation_Citation_Ind = 1
-          AND Regulatory_Violation_TypeA_Citation_Ind = 1
-          AND Regulatory_Violation_TypeB_Citation_Ind = 1
-    """)
+    if Tag == "A":
+        cursor.execute("""
+            SELECT Facility_Number
+            FROM Site_Visit_Notice
+            WHERE Regulatory_Violation_Citation_Ind = 1
+            AND Regulatory_Violation_TypeA_Citation_Ind = 1
+        """)
+    elif Tag == "B":
+        cursor.execute("""
+            SELECT Facility_Number
+            FROM Site_Visit_Notice
+            WHERE Regulatory_Violation_Citation_Ind = 1
+            AND Regulatory_Violation_TypeB_Citation_Ind = 1
+        """)
+    else:
+        cursor.execute("""
+            SELECT Facility_Number
+            FROM Site_Visit_Notice
+            WHERE Regulatory_Violation_Citation_Ind = 1
+            AND Regulatory_Violation_TypeA_Citation_Ind = 1
+            AND Regulatory_Violation_TypeB_Citation_Ind = 1
+        """)
     facilities = cursor.fetchall()
     conn.close()
     return facilities
@@ -170,10 +185,16 @@ def delete(Facility_Number):
     delete_site_visit_notice(Facility_Number)
     return redirect(url_for('site_visit_notice'))
 
-@app.route('/facilities_with_all_violations')
-def facilities_with_all_violations():
-    facilities = get_facilities_with_all_violations()
-    return render_template('facilities_with_all_violations.html', facilities=facilities)
+@app.route('/facilities_with_all_violations/<string:Tag>')
+def facilities_with_all_violations(Tag=""):
+    print("reached facilities_with_all_violations"+Tag+ "******")
+    if(Tag == "A"):
+        facilities = get_facilities_with_all_violations(Tag)
+    elif(Tag == "B"):
+        facilities = get_facilities_with_all_violations(Tag)
+    else:
+        facilities = get_facilities_with_all_violations(Tag)
+    return render_template('facilities_with_all_violations.html', facilities=facilities, Tag=Tag)
 
 if __name__ == '__main__':
     # Use default port 5000 if PORT environment variable is not set
