@@ -154,18 +154,18 @@ def site_visit_notice():
         }
         insert_site_visit_notice(data)
         return redirect(url_for('list_notices', Facility_Number=request.form['Facility_Number']))
-    return render_template('sitevisitnotice.html', notice=None, mode=None)
+    return render_template('siteVisitNotice/sitevisitnotice.html', notice=None, mode=None)
 
 @app.route('/listnotices', methods=['GET', 'POST'])
 def list_notices():
     facility_number = request.form.get('Facility_Number') if request.method == 'POST' else request.args.get('Facility_Number')
     notices = read_site_visit_notice(facility_number) if facility_number else None
-    return render_template('listnotices.html', notices=notices, facility_number=facility_number)
+    return render_template('siteVisitNotice/listnotices.html', notices=notices, facility_number=facility_number)
 
 @app.route('/view/<int:site_visit_notice_id>')
 def view_notice(site_visit_notice_id):
     notice = read_single_site_visit_notice(site_visit_notice_id)
-    return render_template('sitevisitnotice.html', notice=notice, mode='view')
+    return render_template('siteVisitNotice/sitevisitnotice.html', notice=notice, mode='view')
 
 @app.route('/edit/<int:site_visit_notice_id>', methods=['GET', 'POST'])
 def edit_notice(site_visit_notice_id):
@@ -183,7 +183,7 @@ def edit_notice(site_visit_notice_id):
         update_site_visit_notice(site_visit_notice_id, data)
         return redirect(url_for('list_notices', Facility_Number=request.form['Facility_Number']))
     notice = read_single_site_visit_notice(site_visit_notice_id)
-    return render_template('sitevisitnotice.html', notice=notice, mode='edit')
+    return render_template('siteVisitNotice/sitevisitnotice.html', notice=notice, mode='edit')
 
 @app.route('/delete/<int:site_visit_notice_id>', methods=['POST'])
 def delete_notice(site_visit_notice_id):
