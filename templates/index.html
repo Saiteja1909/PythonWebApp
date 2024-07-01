@@ -50,23 +50,28 @@
             justify-content: space-between;
             align-items: center;
         }
+        li {
+            margin: 10px 0px;
+        }
     </style>
 </head>
 <body>
     <div class="navbar">CDSS Forms</div>
     <div class="container">
-        <!-- <div class="tabs">
-            <div class="tab"><a href="/sitevisitnotice">Site Visit Notice Form</a></div>
-        </div> -->
         <p>Select a form to fill out:</p>
         <ul>
             <li>
                 <div class="form-row">
-                    <a href="/sitevisitnotice">Site Visit Notice Form</a>
-                    <a href="/listnotices">Check Notices</a>
+                    <a href="/sitevisitnotice">NOTICE OF SITE VISIT</a>
+                    <button onclick="window.location.href = '/listnotices'">Check Notices</button>
                 </div>
             </li>
-            <!-- Add more list items for different forms -->
+            <li>
+                <div class="form-row">
+                    <a href="/supportivedetailinfo">DETAIL SUPPORTIVE INFORMATION</a>
+                    <button onclick="window.location.href = '/listsupportivedetails'">Check Records</button>
+                </div>
+            </li>
         </ul>
     </div>
 </body>

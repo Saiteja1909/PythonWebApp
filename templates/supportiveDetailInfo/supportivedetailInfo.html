@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIC 812 Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 800px;
+            margin: 20px auto;
+            padding: 8px;
+            border: 1px solid #000;
+            position: relative;
+        }
+        .small-text-left {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            font-size: 10px;
+            text-align: left;
+        }
+        .small-text-right {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            font-size: 10px;
+            text-align: right;
+        }
+        h3 {
+            margin: 10px 0px 0px 0px;
+        }
+        .sub-heading {
+            text-align: left;
+            font-size: 18px;
+            margin-top: 4px;
+            margin-bottom: 4px;
+        }
+        .text-section {
+            text-align: justify;
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        .divider {
+            border: 1px solid #000;
+            margin: 4px 0;
+        }
+        .text-section p {
+            margin: 0
+        }
+        .radio-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .radio-group2 {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .radio-group label {
+            font-size: 12px;
+        }
+        .radio-group2 label {
+            font-size: 10px;
+        }
+        .label2 {
+            font-size: 10px;
+        }
+        .radio-group :last-child {
+            margin-left: 8px;
+        }
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+        .form-group {
+            width: 100%;
+            margin-right: 10px;
+        }
+        .form-group:last-child {
+            margin-right: 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: bold;
+            font-size: 10px;
+        }
+        input[type="text"], input[type="date"], textarea {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #000;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        .textarea-5 {
+            height: 200px;
+        }
+        .textarea-20 {
+            height: 450px;
+        }
+        .signature {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0px;
+        }
+        .signature div {
+            width: 32%;
+        }
+        .note-div {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+        }
+        .note-div p {
+            margin: 0;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .button-container button {
+            padding: 10px 20px;
+            background-color: #005b96;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        .button-container button:hover {
+            background-color: #6497b1;
+        }
+    
+        @media print {
+            body, html {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+            .container {
+                height: 100vh;
+                page-break-after: avoid;
+                margin: 0;
+                padding: 20px;
+                box-sizing: border-box;
+                border: none;
+            }
+            .button-container {
+                display: none;
+            }
+            @page {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="note-div">
+        <p>STATE OF CALIFORNIA<br>HEALTH AND HUMAN SERVICES AGENCY</p>
+        <p>CALIFORNIA DEPARTMENT OF SOCIAL SERVICES<br>COMMUNITY CARE LICENSING DIVISION</p>
+    </div>
+
+    <h3>DETAIL SUPPORTIVE INFORMATION</h3>
+    <h4 class="sub-heading">Type of Activity:</h4>
+    <div class="text-section">
+        <p>This form is intended to document information that is relevant to the licensing file but generally not public information, such as collateral visits. This would include back-up information on deficiencies such as conditions contributing to the severity of violations, witnesses to the violations, or other observation from field notes. When used to support the Licensing Report (LIC 809) the form should be completed, signed and dated shortly after the visit. This assures accuracy and completeness of the detail of the public report.</p>
+    </div>
+    <form 
+        id="supportiveDetailForm" 
+        action="{{ 
+            url_for('supportive_detail_information') if mode is none 
+            else url_for('edit_supportive_detail', record_id=detail.Supportive_Details_Information_Id) if mode == 'edit' 
+            else '#' 
+        }}"
+        method="POST"
+    >
+        <input type="hidden" name="Supportive_Details_Information_Id" value="{{ detail.Supportive_Details_Information_Id if detail else '' }}">
+        <div class="radio-group">
+            <label><input type="radio" name="confidential" value="1" {% if mode == 'view' %}disabled{% endif %} {% if detail and detail.Public_Or_Confidential == 1 %}checked{% endif %} required> Public</label>
+            <label><input type="radio" name="confidential" value="0" {% if mode == 'view' %}disabled{% endif %} {% if detail and detail.Public_Or_Confidential == 0 %}checked{% endif %} required> Confidential</label>
+        </div>
+        <div class="divider"></div>
+        <div class="form-row">
+            <div class="form-group" style="width: 40%;">
+                <label for="facility_name">FACILITY NAME</label>
+                <input type="text" id="facility_name" name="facility_name" value="{{ detail.Facility_Name if detail else '' }}" {% if mode == 'view' %}readonly{% endif %} required>
+            </div>
+
+            <div class="form-group" style="width: 30%;">
+                <label for="facility_number">FACILITY NUMBER</label>
+                <input type="text" id="facility_number" name="facility_number" value="{{ detail.Facility_Number if detail else '' }}" {% if mode == 'view' %}readonly{% endif %} required>
+            </div>
+
+            <div class="form-group" style="width: 15%;">
+                <label for="date_of_contact">DATE(S) OF CONTACT</label>
+                <input type="date" id="date_of_contact" name="date_of_contact" value="{{ detail.Visit_Date if detail else '' }}" {% if mode == 'view' %}readonly{% endif %} required>
+            </div>
+
+            <div class="form-group" style="width: 15%;">
+                <label>COLLATERAL VISIT</label>
+                <div class="radio-group2">
+                    <label><input type="radio" name="collateral_visit" value="1" {% if mode == 'view' %}disabled{% endif %} {% if detail and detail.Collateral_Visit == '1' %}checked{% endif %} required> YES</label>
+                    <label><input type="radio" name="collateral_visit" value="0" {% if mode == 'view' %}disabled{% endif %} {% if detail and detail.Collateral_Visit == '0' %}checked{% endif %} required> NO</label>
+                </div>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="form-group">
+            <label for="description">DESCRIPTION</label>
+            <textarea id="description" name="description" class="textarea-5" {% if mode == 'view' %}readonly{% endif %} required>{{ detail.Visit_Reason_Description if detail else '' }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="comments">COMMENTS</label>
+            <textarea id="comments" name="comments" class="textarea-20" {% if mode == 'view' %}readonly{% endif %} required>{{ detail.Comments if detail else '' }}</textarea>
+        </div>
+
+        <div class="signature">
+            <div class="form-group">
+                <label for="evaluator_signature">LICENSE EVALUATOR SIGNATURE</label>
+                <input type="text" id="evaluator_signature" name="evaluator_signature" value="{{ detail.LPA_Sign if detail else '' }}" {% if mode == 'view' %}readonly{% endif %} required>
+            </div>
+
+            <div class="form-group">
+                <label for="evaluator_name">LICENSE EVALUATOR NAME (PRINT)</label>
+                <input type="text" id="evaluator_name" name="evaluator_name" value="{{ detail.LPA_Name if detail else '' }}" {% if mode == 'view' %}readonly{% endif %} required>
+            </div>
+
+            <div class="form-group">
+                <label for="evaluator_date">DATE</label>
+                <input type="date" id="evaluator_date" name="evaluator_date" value="{{ detail.Signed_DateTime.strftime('%Y-%m-%d') if detail else '' }}" {% if mode == 'view' %}readonly{% endif %} required>
+            </div>
+        </div>
+    </form>
+    <div class="divider"></div>
+    <div class="note-div">
+        <p>LIC 812 (8/06) (PERSONAL/CONFIDENTIAL DEPENDING ON TYPE OF INFORMATION)</p>
+        <p>PAGE____ OF____ PAGES</p>
+    </div>
+</div>
+
+<div class="button-container">
+    <button onclick="navigateToHome()" class="back-button">Back to Home</button>
+    {% if mode %}
+    <button onclick="navigateToDetails(document.getElementById('facility_number').value)" class="back-button">Back to Records</button>
+    {% endif %}
+    {% if mode != 'view' %}
+    <button type="submit" form="supportiveDetailForm">{{ 'Update Record' if mode == 'edit' else 'Submit Record' }}</button>
+    {% endif %}
+    <button onclick="window.print()">Print</button>
+</div>
+
+<script>
+    function navigateToHome() {
+        window.location.href = '/';
+    }
+    function navigateToDetails(facilityNumber) {
+        window.location.href='/listsupportivedetails?Facility_Number='+ facilityNumber;
+    }
+</script>
+
+</body>
+</html>

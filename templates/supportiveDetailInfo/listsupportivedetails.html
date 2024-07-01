@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Supportive Details Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #b3cde0, #6497b1);
+        }
+        .container {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            max-width: 600px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #005b96;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #005b96;
+            color: white;
+        }
+        .icons {
+            display: flex;
+            gap: 10px;
+        }
+        .icon-button {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
+        .icon {
+            height: 20px;
+            width: 20px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .back-button {
+            background-color: #005b96;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .back-button:hover {
+            background-color: #6497b1;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Supportive Details Information</h1>
+        <form method="post" action="/listsupportivedetails">
+            <label for="Facility_Number">Enter Facility Number:</label>
+            <input type="text" id="Facility_Number" value="{{ facility_number if facility_number else '' }}" name="Facility_Number" required>
+            <button type="submit">Search</button>
+        </form>
+        {% if records %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Facility Number</th>
+                    <th>Facility Name</th>
+                    <th>Date of Contact</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in records %}
+                <tr>
+                    <td>{{ record.Supportive_Details_Information_Id }}</td>
+                    <td>{{ record.Facility_Number }}</td>
+                    <td>{{ record.Facility_Name }}</td>
+                    <td>{{ record.Visit_Date }}</td>
+                    <td class="icons">
+                        <form 
+                            action="{{ url_for('view_supportive_detail', record_id=record.Supportive_Details_Information_Id) }}"
+                            method="get"
+                            style="display: inline;"
+                            title="View Record"
+                        >
+                            <button type="submit" class="icon-button">
+                                <img src="{{ url_for('static', filename='images/view_icon.png') }}" alt="View" class="icon">
+                            </button>
+                        </form>
+                    
+                        <form 
+                            action="{{ url_for('edit_supportive_detail', record_id=record.Supportive_Details_Information_Id) }}"
+                            method="get"
+                            style="display: inline;"
+                            title="Edit Record"
+                        >
+                            <button type="submit" class="icon-button">
+                                <img src="{{ url_for('static', filename='images/edit_icon.png') }}" alt="Edit" class="icon">
+                            </button>
+                        </form>
+                    
+                        <form 
+                            id="delete-form-{{ record.Supportive_Details_Information_Id }}"
+                            method="post" 
+                            action="{{ url_for('delete_detail', record_id=record.Supportive_Details_Information_Id) }}" 
+                            style="display:inline;"
+                            title="Delete Record"
+                        >
+                            <input type="hidden" name="Facility_Number" value="{{ facility_number }}">
+                            <button type="button" class="icon-button delete-button" data-id="{{ record.Supportive_Details_Information_Id }}">
+                                <img src="{{ url_for('static', filename='images/delete_icon.png') }}" alt="Delete" class="icon">
+                            </button>
+                        </form>
+                    </td>                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        <div class="button-container">
+            <button onclick="navigateToHome()" class="back-button">Back to Home</button>
+        </div>
+    </div>
+    <script>
+        function navigateToHome() {
+            window.location.href = '/';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButtons = document.querySelectorAll('.delete-button');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const recordId = this.getAttribute('data-id');
+                    if (confirm(`Are you sure you want to delete record ID ${recordId}?`)) {
+                        document.getElementById(`delete-form-${recordId}`).submit();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

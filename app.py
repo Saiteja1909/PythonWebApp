@@ -3,7 +3,7 @@ import pyodbc
 import os
 from datetime import datetime
 
-app = Flask(__name__,static_folder='static')
+app = Flask(__name__, static_folder='static')
 app.secret_key = 'supersecretkey'  # Needed for flashing messages
 
 # Connection string for SQL Server using Windows Authentication
@@ -135,6 +135,112 @@ def delete_site_visit_notice(site_visit_notice_id):
     finally:
         conn.close()
 
+def insert_supportive_detail(data):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO Supportive_Details_Information (
+                Facility_Number,
+                Facility_Name,
+                Public_Or_Confidential,
+                Collateral_Visit,
+                Visit_Date,
+                Visit_Reason_Description,
+                Comments,
+                LPA_Signed_Ind,
+                LPA_Name,
+                Signed_DateTime,
+                Inserted_DateTime,
+                Created_By,
+                Create_DateTime,
+                Updated_By,
+                Update_DateTime,
+                LPA_Sign
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, data['Facility_Number'], data['Facility_Name'], data['Public_Or_Confidential'], data['Collateral_Visit'], 
+           data['Visit_Date'], data['Visit_Reason_Description'], data['Comments'], data['LPA_Signed_Ind'], 
+           data['LPA_Name'], data['Signed_DateTime'], datetime.now(), 'Admin', datetime.now(), 'Admin', 
+           datetime.now(), data['LPA_Sign'])
+        conn.commit()
+    except Exception as e:
+        print(f"Error inserting supportive detail: {e}")
+        flash("An error occurred while submitting the form. Please try again.", "danger")
+    finally:
+        conn.close()
+
+def read_supportive_details(facility_number):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM Supportive_Details_Information WHERE Facility_Number = ?", facility_number)
+        result = cursor.fetchall()
+    except Exception as e:
+        print(f"Error reading supportive details: {e}")
+        flash("An error occurred while retrieving records. Please try again.", "danger")
+        result = None
+    finally:
+        conn.close()
+    return result
+
+def read_single_supportive_detail(record_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        print("RECORD ID>>>>>>>>>>>>>>",record_id)
+        cursor.execute("SELECT * FROM Supportive_Details_Information WHERE Supportive_Details_Information_Id = ?", record_id)
+        result = cursor.fetchone()
+    except Exception as e:
+        print(f"Error reading single supportive detail: {e}")
+        flash("An error occurred while retrieving the record. Please try again.", "danger")
+        result = None
+    finally:
+        conn.close()
+    return result
+
+def update_supportive_detail(record_id, data):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE Supportive_Details_Information
+            SET
+                Facility_Number = ?,
+                Facility_Name = ?,
+                Public_Or_Confidential = ?,
+                Collateral_Visit = ?,
+                Visit_Date = ?,
+                Visit_Reason_Description = ?,
+                Comments = ?,
+                LPA_Signed_Ind = ?,
+                LPA_Name = ?,
+                Signed_DateTime = ?,
+                Updated_By = 'Admin',
+                Update_DateTime = ?,
+                LPA_Sign = ?
+            WHERE Supportive_Details_Information_Id = ?
+        """, data['Facility_Number'], data['Facility_Name'], data['Public_Or_Confidential'], data['Collateral_Visit'], 
+           data['Visit_Date'], data['Visit_Reason_Description'], data['Comments'], data['LPA_Signed_Ind'], 
+           data['LPA_Name'], data['Signed_DateTime'], datetime.now(), data['LPA_Sign'], record_id)
+        conn.commit()
+    except Exception as e:
+        print(f"Error updating supportive detail: {e}")
+        flash("An error occurred while updating the record. Please try again.", "danger")
+    finally:
+        conn.close()
+
+def delete_supportive_detail(record_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Supportive_Details_Information WHERE Supportive_Details_Information_Id = ?", record_id)
+        conn.commit()
+    except Exception as e:
+        print(f"Error deleting supportive detail: {e}")
+        flash("An error occurred while deleting the record. Please try again.", "danger")
+    finally:
+        conn.close()
+
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -190,6 +296,75 @@ def delete_notice(site_visit_notice_id):
     facility_number = request.form['Facility_Number']
     delete_site_visit_notice(site_visit_notice_id)
     return redirect(url_for('list_notices', Facility_Number=facility_number))
+
+@app.route('/supportivedetailinfo', methods=['GET', 'POST'])
+def supportive_detail_information():
+    if request.method == 'POST':
+        try:
+            data = {
+                'Facility_Number': request.form.get('facility_number'),
+                'Facility_Name': request.form.get('facility_name'),
+                'Public_Or_Confidential': request.form.get('confidential'),
+                'Collateral_Visit': request.form.get('collateral_visit'),
+                'Visit_Date': request.form.get('date_of_contact'),
+                'Visit_Reason_Description': request.form.get('description'),
+                'Comments': request.form.get('comments'),
+                'LPA_Signed_Ind': 1 if request.form.get('evaluator_signature') else 0,
+                'LPA_Name': request.form.get('evaluator_name'),
+                'Signed_DateTime': request.form.get('evaluator_date'),
+                'LPA_Sign': request.form.get('evaluator_signature')
+            }
+            insert_supportive_detail(data)
+            flash("Form submitted successfully!", "success")
+        except Exception as e:
+            print(f"Error inserting supportive details information: {e}")
+            flash("An error occurred while submitting the form. Please try again.", "danger")
+        return redirect(url_for('home'))
+    return render_template('supportiveDetailInfo/supportivedetailInfo.html', detail=None, mode=None)
+
+@app.route('/listsupportivedetails', methods=['GET', 'POST'])
+def list_supportive_details():
+    facility_number = request.form.get('Facility_Number') if request.method == 'POST' else request.args.get('Facility_Number')
+    details = read_supportive_details(facility_number) if facility_number else None
+    print("FACILITY NUMBER>>>>>>",facility_number, details)
+    return render_template('supportiveDetailInfo/listsupportivedetails.html', records=details, facility_number=facility_number)
+
+@app.route('/viewdetail/<int:record_id>')
+def view_supportive_detail(record_id):
+    detail = read_single_supportive_detail(record_id)
+    return render_template('supportiveDetailInfo/supportivedetailInfo.html', detail=detail, mode='view')
+
+@app.route('/editdetail/<int:record_id>', methods=['GET', 'POST'])
+def edit_supportive_detail(record_id):
+    if request.method == 'POST':
+        try:
+            data = {
+                'Facility_Number': request.form.get('facility_number'),
+                'Facility_Name': request.form.get('facility_name'),
+                'Public_Or_Confidential': request.form.get('confidential'),
+                'Collateral_Visit': request.form.get('collateral_visit'),
+                'Visit_Date': request.form.get('date_of_contact'),
+                'Visit_Reason_Description': request.form.get('description'),
+                'Comments': request.form.get('comments'),
+                'LPA_Signed_Ind': 1 if request.form.get('evaluator_signature') else 0,
+                'LPA_Name': request.form.get('evaluator_name'),
+                'Signed_DateTime': request.form.get('evaluator_date'),
+                'LPA_Sign': request.form.get('evaluator_signature')
+            }
+            update_supportive_detail(record_id, data)
+            flash("Record updated successfully!", "success")
+        except Exception as e:
+            print(f"Error updating supportive detail: {e}")
+            flash("An error occurred while updating the record. Please try again.", "danger")
+        return redirect(url_for('list_supportive_details', Facility_Number=request.form.get('facility_number')))
+    detail = read_single_supportive_detail(record_id)
+    return render_template('supportiveDetailInfo/supportivedetailInfo.html', detail=detail, mode='edit')
+
+@app.route('/deletedetail/<int:record_id>', methods=['POST'])
+def delete_detail(record_id):
+    facility_number = request.form.get('Facility_Number')
+    delete_supportive_detail(record_id)
+    return redirect(url_for('list_supportive_details', Facility_Number=facility_number))
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
