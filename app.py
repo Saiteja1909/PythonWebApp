@@ -147,7 +147,6 @@ def insert_supportive_detail(data):
                 Collateral_Visit,
                 Visit_Date,
                 Visit_Reason_Description,
-                Comments,
                 LPA_Signed_Ind,
                 LPA_Name,
                 Signed_DateTime,
@@ -157,9 +156,9 @@ def insert_supportive_detail(data):
                 Updated_By,
                 Update_DateTime,
                 LPA_Sign
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, data['Facility_Number'], data['Facility_Name'], data['Public_Or_Confidential'], data['Collateral_Visit'], 
-           data['Visit_Date'], data['Visit_Reason_Description'], data['Comments'], data['LPA_Signed_Ind'], 
+           data['Visit_Date'], data['Visit_Reason_Description'], data['LPA_Signed_Ind'], 
            data['LPA_Name'], data['Signed_DateTime'], datetime.now(), 'Admin', datetime.now(), 'Admin', 
            datetime.now(), data['LPA_Sign'])
         conn.commit()
@@ -211,7 +210,6 @@ def update_supportive_detail(record_id, data):
                 Collateral_Visit = ?,
                 Visit_Date = ?,
                 Visit_Reason_Description = ?,
-                Comments = ?,
                 LPA_Signed_Ind = ?,
                 LPA_Name = ?,
                 Signed_DateTime = ?,
@@ -220,7 +218,7 @@ def update_supportive_detail(record_id, data):
                 LPA_Sign = ?
             WHERE Supportive_Details_Information_Id = ?
         """, data['Facility_Number'], data['Facility_Name'], data['Public_Or_Confidential'], data['Collateral_Visit'], 
-           data['Visit_Date'], data['Visit_Reason_Description'], data['Comments'], data['LPA_Signed_Ind'], 
+           data['Visit_Date'], data['Visit_Reason_Description'], data['LPA_Signed_Ind'], 
            data['LPA_Name'], data['Signed_DateTime'], datetime.now(), data['LPA_Sign'], record_id)
         conn.commit()
     except Exception as e:
@@ -495,7 +493,6 @@ def supportive_detail_information():
                 'Collateral_Visit': request.form.get('collateral_visit'),
                 'Visit_Date': request.form.get('date_of_contact'),
                 'Visit_Reason_Description': request.form.get('description'),
-                'Comments': request.form.get('comments'),
                 'LPA_Signed_Ind': 1 if request.form.get('evaluator_signature') else 0,
                 'LPA_Name': request.form.get('evaluator_name'),
                 'Signed_DateTime': request.form.get('evaluator_date'),
@@ -506,7 +503,7 @@ def supportive_detail_information():
         except Exception as e:
             print("Error inserting supportive details information: {e}")
             flash("An error occurred while submitting the form. Please try again.", "danger")
-        return redirect(url_for('home'))
+        return redirect(url_for('list_supportive_details', Facility_Number=request.form['facility_number']))
     return render_template('supportiveDetailInfo/supportivedetailInfo.html', detail=None, mode=None)
 
 @app.route('/listsupportivedetails', methods=['GET', 'POST'])
@@ -532,7 +529,6 @@ def edit_supportive_detail(record_id):
                 'Collateral_Visit': request.form.get('collateral_visit'),
                 'Visit_Date': request.form.get('date_of_contact'),
                 'Visit_Reason_Description': request.form.get('description'),
-                'Comments': request.form.get('comments'),
                 'LPA_Signed_Ind': 1 if request.form.get('evaluator_signature') else 0,
                 'LPA_Name': request.form.get('evaluator_name'),
                 'Signed_DateTime': request.form.get('evaluator_date'),

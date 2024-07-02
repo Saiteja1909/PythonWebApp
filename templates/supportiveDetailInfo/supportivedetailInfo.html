@@ -99,7 +99,7 @@
             box-sizing: border-box;
         }
         .textarea-5 {
-            height: 200px;
+            height: 620px;
         }
         .textarea-20 {
             height: 450px;
@@ -222,11 +222,6 @@
         <div class="form-group">
             <label for="description">DESCRIPTION</label>
             <textarea id="description" name="description" class="textarea-5" {% if mode == 'view' %}readonly{% endif %} required>{{ detail.Visit_Reason_Description if detail else '' }}</textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="comments">COMMENTS</label>
-            <textarea id="comments" name="comments" class="textarea-20" {% if mode == 'view' %}readonly{% endif %} required>{{ detail.Comments if detail else '' }}</textarea>
         </div>
 
         <div class="signature">
