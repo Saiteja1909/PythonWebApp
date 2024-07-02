@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIC 184B Notification of Incomplete Application</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .border-box {
+            border: 1px solid #000;
+            padding: 10px;
+        }
+        .form-section {
+            margin-bottom: 10px;
+        }
+        .section-title {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            padding: 5px;
+            text-align: center;
+        }
+        .checkbox-label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-divider {
+            margin: 10px 0;
+            border-top: 1px solid #000;
+        }
+        .header-row {
+            border-bottom: 2px solid #000;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        .header-title {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        .header-subtitle {
+            font-size: 1em;
+        }
+        .inline-form-group {
+            display: inline-block;
+            width: auto;
+        }
+        .inline-form-group input {
+            display: inline-block;
+            width: auto;
+        }
+        .signature-box {
+            display: flex;
+            justify-content: space-between;
+        }
+        .small-text {
+            font-size: 0.8em;
+        }
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .header-text {
+            flex: 1;
+        }
+        .header-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .header-inputs .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 0;
+        }
+        .header-inputs .form-group label {
+            margin-bottom: 0;
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+        .header-inputs .form-control {
+            flex: 1;
+            width: 250px;
+        }
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #000;
+            padding-top: 10px;
+        }
+        .signature-section .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .phone-number-group {
+            display: flex;
+            align-items: center;
+        }
+        .phone-number-group input {
+            width: 250px;
+            margin-left: 5px;
+        }
+        .small-text {
+            margin-top: 10px;
+            display: block;
+        }
+        .overall-border {
+            border: 2px solid #000;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .vertical-divider {
+            border-left: 2px solid #000;
+            height: 100%;
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+        }
+        .vertical-divider-container {
+            position: relative;
+        }
+        @page {
+            size: auto;
+            margin: 0.5mm 2mm 0mm 2mm; /* Adjust as needed to prevent cropping */
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .button-container button {
+            padding: 10px 20px;
+            background-color: #005b96;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+
+        .button-container button:hover {
+            background-color: #6497b1;
+        }
+
+        @media print {
+            body, html {
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+            }
+
+            .container {
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                margin: 0;
+            }
+
+            .overall-border {
+                padding: 5px;
+                margin-bottom: 0;
+                border: 1px solid #000; /* Ensure the border is printed */
+            }
+
+            .form-section {
+                margin-bottom: 5px;
+            }
+
+            .form-check-label {
+                font-size: 0.9em;
+            }
+
+            .header-section {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+
+            .header-inputs {
+                width: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .signature-section {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .header-inputs .form-group, .signature-section .form-group {
+                width: auto;
+            }
+
+            .form-check-label, .form-control, .form-check-input {
+                margin-bottom: 0;
+            }
+
+            .form-check {
+                margin-bottom: 5px;
+            }
+
+            .form-divider {
+                margin: 5px 0;
+            }
+
+            .section-title {
+                font-size: 1em;
+            }
+
+            .header-text h3 {
+                font-size: 1.2em;
+                margin: 0;
+            }
+
+            .header-text, .header-inputs {
+                margin-bottom: 5px;
+            }
+
+            .row {
+                display: flex;
+                flex-wrap: nowrap;
+            }
+
+            .col-md-6 {
+                flex: 0 0 50%;
+                max-width: 50%;
+                position: relative;
+            }
+
+            .form-check-label, .form-check-input {
+                margin-bottom: 0.5em;
+            }
+
+            .vertical-divider {
+                display: block;
+            }
+
+            .btn {
+                display: none;
+            }
+
+            .small-text {
+                display: block;
+            }
+
+            .footer-text {
+                display: block;
+                text-align: left;
+                font-size: 0.8em;
+            }
+            .button-container {
+                display: none;
+            }
+        }
+
+        @media screen {
+            .vertical-divider {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="overall-border">
+            <div class="d-flex justify-content-between mb-2">
+                <div class="small-text">
+                    <p>STATE OF CALIFORNIA - HEALTH AND HUMAN SERVICES AGENCY</p>
+                </div>
+                <div class="small-text">
+                    <p>CALIFORNIA DEPARTMENT OF SOCIAL SERVICES</p>
+                </div>
+            </div>
+            <form
+                action="{{
+                    url_for('notification_of_incomplete_application') if mode is none 
+                    else url_for('edit_notification', notification_id=notification.Notification_Of_Incomplete_Application_Id) if mode == 'edit' 
+                    else '#'
+                }}" 
+                method="post"
+                id="notification_of_incomplete_application-form"
+            >
+                <div class="header-section">
+                    <div class="header-text">
+                        <h3>NOTIFICATION OF INCOMPLETE APPLICATION (NOIA)</h3>
+                        <h3>CHILD CARE CENTERS</h3>
+                        <h3>PRE-30-DAY NOIA</h3>
+                    </div>
+                    <div class="header-inputs">
+                        <div class="form-group">
+                            <label for="date">DATE:</label>
+                            <input type="date" class="form-control" id="date" name="date" value="{{ notification.Notice_Date if notification else '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="applicant_name">APPLICANT’S NAME:</label>
+                            <input type="text" class="form-control" id="applicant_name" name="applicant_name" value="{{ notification.Applicant_Name if notification else '' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="facility_file_number">FACILITY FILE NUMBER:</label>
+                            <input type="text" class="form-control" id="facility_file_number" name="facility_file_number" value="{{ notification.Facility_Number if notification else '' }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-divider"></div>
+                The Department of Social Services received your application for a child care center license on
+                <div class="inline-form-group">
+                    <input type="date" class="form-control" id="received_date" name="received_date" value="{{ notification.Received_Date if notification else '' }}">
+                </div>.
+                The Department’s
+                review found your application is incomplete as we have not received the items checked below. Please forward the requested information in
+                order to avoid denial of your application. If your application is denied, you may not be able to reapply for a period of one year.
+                <div class="form-divider"></div>
+
+                <div class="border-box vertical-divider-container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="section-title">SECTION A (LICENSING FORMS)</div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="lic200a" name="lic200a" {% if notification and notification.Appl_For_Facility_License_LIC200_200A_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="lic200a">Application for Child Care Center License (LIC 200A)</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="lic215" name="lic215" {% if notification and notification.Applicant_Information_LIC215_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="lic215">Applicant Information (LIC 215)</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="lic308" name="lic308" {% if notification and notification.Designation_Of_Facility_Responsibility_LIC308_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="lic308">Designation of Facility Responsibility (LIC 308)</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="lic309" name="lic309" {% if notification and notification.Administrative_Organization_LIC309_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="lic309">Administrative Organization (LIC 309)</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="lic401" name="lic401" {% if notification and notification.Monthly_Operating_Statement_LIC401_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="lic401">Monthly Operating Statement (LIC 401)</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="lic404" name="lic404" {% if notification and notification.Financial_Info_Release_Verification_LIC404_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="lic404">Financial Information Release and Verification (LIC 404)</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="lic500" name="lic500" {% if notification and notification.Personnel_Report_LIC500_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="lic500">Personnel Report (LIC 500)</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="lic501" name="lic501" {% if notification and notification.Personnel_Record_LIC501_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="lic501">Personnel Report (LIC 501)</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="lic503" name="lic503" {% if notification and notification.Facility_Personnel_Health_Screening_Rpt_LIC503_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="lic503">Health Screening Report -- Facility Personnel (LIC 503) for:</label>
+                                <input type="text" class="form-control mt-2" id="lic503_detail" name="lic503_detail" value="{{ notification.Health_Screening_Rpt_Personnel_Names if notification else '' }}">
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="lic508" name="lic508" {% if notification and notification.Applicant_Criminal_Record_Statement_LIC508_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="lic508">Criminal Record Statement (LIC 508) for Applicant and for:</label>
+                                <input type="text" class="form-control mt-2" id="lic508_detail" name="lic508_detail" value="{{ notification.Criminal_Record_Statement_Personnel_Names if notification else '' }}">
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="lic610" name="lic610" {% if notification and notification.Emergency_Disaster_Plan_LIC610_610A_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="lic610">Emergency Disaster Plan for Child Care Facilities (LIC 610)</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="lic999" name="lic999" {% if notification and notification.Facility_Sketch_Floor_Plan_LIC999_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="lic999">Facility Sketch (Floor Plan) (LIC 999)</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="orientation_certificate" name="orientation_certificate" {% if notification and notification.Orientation_Certificate_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="orientation_certificate">Orientation Certificate</label>
+                            </div>
+                        </div>
+                        <div class="vertical-divider"></div>
+                        <div class="col-md-6">
+                            <div class="section-title">SECTION B (SUPPORTIVE DOCUMENTS)</div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="partnership_agreement" name="partnership_agreement" {% if notification and notification.Articles_Of_Incorporation_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="partnership_agreement">Partnership Agreement/Articles of Incorporation</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="verification_qualifications" name="verification_qualifications" {% if notification and notification.Verification_Of_Admin_Or_Dir_Qualification_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="verification_qualifications">Verification of Administrator/Director Qualifications</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="tb_clearances" name="tb_clearances" {% if notification and notification.TB_Clearance_For_Applicant_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="tb_clearances">Copies of T.B. Clearances for applicant and for:</label>
+                                <input type="text" class="form-control mt-2" id="tb_clearances_detail" name="tb_clearances_detail" value="{{ notification.TB_Clearance_For_Applicant_Names if notification else '' }}">
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="personnel_policies" name="personnel_policies" {% if notification and notification.Personnel_Policies_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="personnel_policies">Personnel Policies</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="in_service_training" name="in_service_training" {% if notification and notification.In_Service_Staff_Training_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="in_service_training">In-Service Training for Staff</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="job_description" name="job_description" {% if notification and notification.Job_Desc_Of_Each_Pos_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="job_description">Job Description for Each Position</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="program_description" name="program_description" {% if notification and notification.Facility_Program_Description_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="program_description">Facility Program Description</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="discipline_policies" name="discipline_policies" {% if notification and notification.Rules_Of_Discipline_Policies_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="discipline_policies">Discipline Policies</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="admission_policies" name="admission_policies" {% if notification and notification.Admission_Policies_Procedures_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="admission_policies">Admission Policies and Procedures</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="admission_agreement" name="admission_agreement" {% if notification and notification.Admission_Agreement_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="admission_agreement">Admission Agreement</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="sample_menu" name="sample_menu" {% if notification and notification.Sample_Menu_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="sample_menu">Sample Menu</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="inventory_furniture" name="inventory_furniture" {% if notification and notification.List_Of_In_And_Outdoor_Equipment_Inv_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="inventory_furniture">List of Indoor/Outdoor Play Equipment and Inventory of Furniture</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="control_property" name="control_property" {% if notification and notification.Control_Of_Property_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="control_property">Control of Property</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="bacteriological_analysis" name="bacteriological_analysis" {% if notification and notification.Bacteriol_Analysis_Of_Private_Water_Supply_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="bacteriological_analysis">Bacteriological Analysis of Water (where water for human consumption is from a private source)</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="other_ind" name="other_ind" {% if notification and notification.Other_Ind %} checked {% endif %}>
+                                <label class="form-check-label checkbox-label" for="other_ind">Other</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="other" name="other" value="{{ notification.Other_Description if notification else '' }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                            
+                <br>
+                <div class="signature-section">
+                    <div class="form-group">
+                        <label for="licensing_reviewer_signature">LICENSING REVIEWER'S SIGNATURE</label>
+                        <input type="text" class="form-control" id="licensing_reviewer_signature" name="licensing_reviewer_signature" value="{{ notification.LPA_Sign if notification else '' }}">
+                    </div>
+                    <div class="form-group phone-number-group">
+                        <label for="phone_number">PHONE NUMBER</label>
+                        <input type="text" class="form-control" id="phone_number" name="phone_number" value="{{ notification.LPA_Phone_Number if notification else '' }}">
+                    </div>
+                </div>
+                <div class="form-divider"></div>
+                
+                <div class="small-text footer-text">
+                    <p>LIC 184C (1/14)</p>
+                </div>
+                <!-- <button type="submit" class="btn btn-primary mb-4">Submit</button> -->
+            </form>
+        </div>
+    </div>
+    <div class="button-container">
+        <button onclick="navigateToHome()" class="back-button">Back to Home</button>
+        {% if mode %}
+        <button onclick="navigateToNotiications(document.getElementById('facility_file_number').value)" class="back-button">Back to Notifications</button>
+        {% endif %}
+        {% if mode != 'view' %}
+        <button type="submit" form="notification_of_incomplete_application-form">{{ 'Update Notification' if mode == 'edit' else 'Submit Notification' }}</button>
+        {% endif %}
+        <button onclick="window.print()">Print</button>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mode = "{{ mode }}";
+            if (mode === 'view') {
+                const inputs = document.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.setAttribute('readonly', 'readonly');
+                    input.setAttribute('disabled', 'disabled');
+                });
+            }
+        });
+    
+        function navigateToHome() {
+            window.location.href = '/';
+        }
+        function navigateToNotiications(Facility_Number) {
+            window.location.href='/listnotifications?Facility_Number='+ Facility_Number;
+        }
+    </script>
+</body>
+</html>
+                            
