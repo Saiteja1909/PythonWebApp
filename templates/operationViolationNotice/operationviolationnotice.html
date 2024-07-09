@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Operation Violation Notice</title>
+    <style>
+        /* Normal styles for screen */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        select, input[type="text"], input[type="datetime-local"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .form-group-inline {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .form-group-inline .form-group {
+            width: 48%;
+        }
+
+        .hidden-field {
+            display: none;
+        }
+
+        /* Styles for print */
+        @media print {
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+
+            .container {
+                width: 100%;
+                margin: 0;
+                border: none;
+                box-shadow: none;
+                page-break-after: always; /* Ensure each form starts on a new page */
+            }
+
+            h1 {
+                text-align: center;
+            }
+
+            .form-group {
+                margin-bottom: 10px;
+            }
+
+            label {
+                display: block;
+                font-weight: bold;
+                margin-bottom: 3px;
+            }
+
+            select, input[type="text"], input[type="datetime-local"], textarea {
+                width: 100%;
+                padding: 6px;
+                margin: 3px 0;
+                border: none;
+                border-bottom: 1px solid #000; /* Add underline for fields */
+                font-size: 14px; /* Adjust font size */
+            }
+
+            button {
+                display: none; /* Hide buttons in print view */
+            }
+
+            hr {
+                border: none;
+                border-top: 1px solid #000; /* Add lines for separation */
+                margin: 10px 0;
+            }
+
+            p, ul {
+                font-size: 14px; /* Adjust font size */
+                margin: 10px 0;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 10px;
+                font-size: 14px; /* Adjust font size */
+            }
+
+            th, td {
+                border: 1px solid #000;
+                padding: 8px;
+            }
+
+            a {
+                color: #000;
+                text-decoration: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ 'View' if mode == 'view' else 'Edit' if mode == 'edit' else 'New' }} Operation Violation Notice</h1>
+        <form id="operationForm" 
+        action="{{ 
+            url_for('operation_violation_notice') if mode is none
+            else url_for('update_operation_violation_notice', operation_violation_notice_id=notice.Operation_violation_Notice_Id) if mode == edit
+        }}"
+        method="post">
+            <div class="form-group">
+                <label for="Regional_Office_Name">Name of Licensing Agency</label>
+                {% if mode == 'view' %}
+                    <span id="Regional_Office_Name">{{ regional_office[0] }}</span>
+                {% else %}
+                    <select name="Regional_Office_Name" id="Regional_Office_Name" required>
+                        <option value="">Select Regional Office</option>
+                        {% for office in regional_offices %}
+                            <option value="{{ office[0] }}" {% if notice and notice.Regional_Office_Name == office[0] %}selected{% endif %}>{{ office[0] }}</option>
+                        {% endfor %}
+                    </select>
+                {% endif %}
+            </div>
+    
+            <!-- Hidden fields for populated data -->
+            <input type="hidden" class="hidden-field" name="Regional_Office_City" id="Regional_Office_City" value="{{ notice.Regional_Office_City if notice else '' }}">
+            <input type="hidden" class="hidden-field" name="Regional_Office_State" id="Regional_Office_State" value="{{ notice.Regional_Office_State if notice else '' }}">
+            <input type="hidden" class="hidden-field" name="Regional_Office_Zip" id="Regional_Office_Zip" value="{{ notice.Regional_Office_Zip if notice else '' }}">
+            <input type="hidden" class="hidden-field" name="Regional_Office_Phone_Number" id="Regional_Office_Phone_Number" value="{{ notice.Regional_Office_Phone_Number if notice else '' }}">
+            <input type="hidden" name="Regional_Office_Number" id="Regional_Office_Number" value="{{ notice.Regional_Office_Number if notice else '' }}">
+
+            <div class="form-group-inline">
+                <div class="form-group">
+                    <label for="Combined_Location">Location (City, State, Zip)</label>
+                    <input type="text" name="Combined_Location" id="Combined_Location" value="{% if mode == 'view' %}{{ regional_office[1] }}, {{ regional_office[3] }}, {{ regional_office[4] }}{% else %}{{ notice.Combined_Location if notice else '' }}{% endif %}" {% if mode == 'view' %}readonly{% endif %}>
+                </div>
+                <div class="form-group">
+                    <label for="Regional_Office_Phone_Number_Display">Phone Number</label>
+                    <input type="text" name="Regional_Office_Phone_Number_Display" id="Regional_Office_Phone_Number_Display" value="{% if mode == 'view' %}{{ regional_office[5] }}{% else %}{{ notice.Regional_Office_Phone_Number_Display if notice else '' }}{% endif %}" {% if mode == 'view' %}readonly{% endif %}>
+                </div>
+            </div>
+            <li> To: </li>
+            <hr>
+            <div class="form-group">
+                <label for="Facility_Name">Name</label>
+                <input type="text" name="Facility_Name" id="Facility_Name" value="{{ notice.Facility_Name if notice else '' }}" {% if mode == 'view' %}readonly{% endif %} required>
+            </div>
+            <div class="form-group">
+                <label for="Facility_Address">Address</label>
+                <input type="text" name="Facility_Address" id="Facility_Address" value="{{ notice.Facility_Address if notice else '' }}" {% if mode == 'view' %}readonly{% endif %} required>
+            </div>
+            <div class="form-group">
+                <label for="Facility_City">City</label>
+                <input type="text" name="Facility_City" id="Facility_City" value="{{ notice.Facility_City if notice else '' }}" {% if mode == 'view' %}readonly{% endif %} required>
+            </div>
+            <div class="form-group">
+                <label for="Location_Label">Location</label>
+                <input type="text" name="Location_Label" id="Location_Label" value="{{ notice.Location_Label if notice else '' }}" {% if mode == 'view' %}readonly{% endif %} required>
+            </div>
+            <hr>
+            <p>SUBJECT: NOTICE OF OPERATION IN VIOLATION OF LAW</p>
+            <p>
+                You are hereby notified that the facility at the above location is operating without a license in violation of 
+                California Health and Safety Code Sections 1508, 1568.03, 1569.10, or 1596.80. These sections prohibit any 
+                person, firm, partnership, association, or corporation within the state from operating, establishing, managing, 
+                conducting, or maintaining a community care facility, residential care facility for chronically ill, residential 
+                care facility for the elderly, or child care facility in this state without a current valid license.  In accordance 
+                with Health and Safety Code Sections 1540, 1541, 1568.03, 1568.0823,  1569.40, 1569.41, 1596.89 and/or 
+                1596.890 and other applicable laws, your continued operation without a license could result in civil  
+                and/or criminal action being taken against you.
+            </p>
+            <p>
+                You may file an application for license by contacting the licensing agency at 
+                {% if mode == 'view' %}
+                    <span id="Street_Address">{{ regional_office[2] }}</span>
+                {% else %}
+                    <span id="Street_Address">_________________</span>
+                {% endif %} 
+                if the Department has not taken any of the following actions in accordance with Health and Safety Code Section 
+                1520.3, 1550.5, 1568.065, 1569.16, 1569.50, 1596.851, or 1596.885:
+            </p>
+            <ul>
+                <li>Denied your license application within the last 12 months;</li>
+                <li>Currently suspended your license;</li>
+                <li>Revoked your license or certification within the last 2 years; and</li>
+                <li>Excluded you from licensed facilities without reinstatement.</li>
+            </ul>
+            <p>
+                However, continued operation pending process of your application is a violation of law, subject to civil 
+                penalties under Health and Safety Code Section 1547, 1568.0821, 1569.485, or 1596.893b, and applicable 
+                regulations, as well as other actions by the Department.
+            </p>
+            <div class="form-group-inline">
+                <div class="form-group">
+                    <label for="Regional_Office_Manager">Regional Office Manager/County Licensing Office Manager</label>
+                    {% if mode == 'view' %}
+                        <input type="text" name="Regional_Office_Manager" id="Regional_Office_Manager" value="{{ notice.Regional_Office_Manager }}" readonly>
+                    {% else %}
+                        <input type="text" name="Regional_Office_Manager" id="Regional_Office_Manager" value="{{ notice.Regional_Office_Manager }}" required>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label for="LPA_Manager_Signed_DateTime">Date of Issuance</label>
+                    {% if mode == 'view' %}
+                    <input type="datetime-local" name="LPA_Manager_Signed_DateTime" id="LPA_Manager_Signed_DateTime" value="{% if notice.LPA_Manager_Signed_DateTime %}{{ notice.LPA_Manager_Signed_DateTime.strftime('%Y-%m-%dT%H:%M') }}{% endif %}" readonly>
+                    {% else %}
+                        <input type="datetime-local" name="LPA_Manager_Signed_DateTime" id="LPA_Manager_Signed_DateTime" value="{% if notice.LPA_Manager_Signed_DateTime %}{{ notice.LPA_Manager_Signed_DateTime.strftime('%Y-%m-%dT%H:%M') }}{% endif %}" required>
+                    {% endif %}
+                </div>
+            </div>
+            {% if mode != 'view' %}
+                <button type="submit">{{ 'Update' if mode == 'edit' else 'Submit Notice' }}</button>
+            {% endif %}
+            <button type="button" class="print-button" onclick="printForm()">Print</button>
+            <button type="button" class="home-button" onclick="navigateToHome()">Back to Home</button>
+        </form>
+    </div>
+
+    <script>
+        function fetchOfficeDetails(selectedOffice) {
+            // Construct the API URL with the selected office name
+            var apiUrl = '/api/regional-office-info/' + encodeURIComponent(selectedOffice);
+
+            fetch(apiUrl)
+                .then(response => response.json()) // Parse the JSON response
+                .then(data => {
+                    if (data && data.name) { // Check if data object exists and has the 'name' property
+                        console.log('Office data fetched:', data); // Debugging: log the fetched data
+                        // Populate the hidden fields with the fetched data
+                        document.getElementById('Regional_Office_City').value = data.city;
+                        document.getElementById('Regional_Office_State').value = data.state;
+                        document.getElementById('Regional_Office_Zip').value = data.zip_code;
+                        document.getElementById('Regional_Office_Phone_Number').value = data.phone_number;
+                        document.getElementById('Regional_Office_Number').value = data.regional_office_number;
+                        console.log('Hidden fields updated');
+
+                        // Combine the city, state, and zip into one field
+                        document.getElementById('Combined_Location').value = data.city + ', ' + data.state + ', ' + data.zip_code;
+
+                        // Set the phone number display field
+                        document.getElementById('Regional_Office_Phone_Number_Display').value = data.phone_number;
+
+                        // Set the street_address in the application for license notice
+                        var streetAddressField = document.getElementById('Street_Address');
+                        if (streetAddressField) {
+                            streetAddressField.innerHTML = '<strong><u>' + data.street_address + '</u></strong>';
+                        }
+                    } else {
+                        console.log("Office data not found for selected office: " + selectedOffice);
+                    }
+                })
+                .catch(error => console.error('Error fetching office details:', error));
+        }
+
+        function printForm() {
+            window.print();
+        }
+
+        function navigateToHome() {
+            window.location.href = '/';
+        }
+
+        // Wait for the DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const officeSelect = document.getElementById('Regional_Office_Name');
+            officeSelect.addEventListener('change', () => fetchOfficeDetails(officeSelect.value));
+        });
+    </script>
+</body>
+</html>

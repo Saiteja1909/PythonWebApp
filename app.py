@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for, flash
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify
 import pyodbc
 import os
 from datetime import datetime
@@ -661,6 +661,290 @@ def delete_notification(notification_id):
     facility_number = request.form.get('Facility_Number')
     delete_notification(notification_id)
     return redirect(url_for('list_notifications', Facility_Number=facility_number))
+
+#---------------------- Operation_Violation_Notice LIC195-------------------------------------------
+#Create
+def insert_operation_violation_notice(data):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO Operation_Violation_Law (
+                Original_Regional_Office_Number,
+                Facility_Name,
+                Facility_Address,
+                Facility_City,
+                Form_Name,
+                Form_Number,
+                Location_Label,
+                LPA_Manager_Signed_DateTime,
+                Signed_Ind,     
+                Code_FT,
+                Inserted_DateTime,
+                Created_By,
+                Create_DateTime
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, data['Regional_Office_Number'], data['Facility_Name'], data['Facility_Address'], data['Facility_City'],
+            'NOTICE OF OPERATION IN VIOLATION OF LAW', 'LIC195',
+            data['Location_Label'], datetime.now(), '1', 'CODEFT' ,datetime.now(), 'Admin', datetime.now())
+        conn.commit()
+    except Exception as e:
+        print(f"Error inserting operation violation notice: {e}")
+        flash("An error occurred while submitting the form. Please try again.", "danger")
+    finally:
+        conn.close()
+
+#Read
+def read_single_operation_violation(operation_violation_law_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM Operation_Violation_Law WHERE Operation_Violation_Law_Id = ?", operation_violation_law_id)
+        result = cursor.fetchone()
+    except Exception as e:
+        print(f"Error reading single operation violation notice: {e}")
+        flash("An error occurred while retrieving the notice. Please try again.", "danger")
+        result = None
+    finally:
+        conn.close()
+    return result
+
+def read_operation_violation(Facility_Name):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM Operation_Violation_Law WHERE Facility_Name = ?", Facility_Name)
+        result = cursor.fetchall()
+    except Exception as e:
+        print(f"Error reading operation violation notice: {e}")
+        flash("An error occurred while retrieving notices. Please try again.", "danger")
+        result = None
+    finally:
+        conn.close()
+    return result
+
+#Update
+
+def edit_operation_violation_notice(operation_violation_law_id, data):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE Operation_Violation_Law
+            SET
+                Original_Regional_Office_Number,
+                Facility_Name
+                Facility_Address,
+                Facility_City,
+                Location_Label,
+                Updated_By = 'Admin',
+                Update_DateTime = ?
+            WHERE Operation_Violation_Law_Id = ?
+        """, data['Regional_Office_Number'], data['Facility_Name'], data['Facility_Address'], data['Facility_City'],
+           data['Location_Label'], 'Admin', datetime.now(), operation_violation_law_id)
+        conn.commit()
+    except Exception as e:
+        print(f"Error updating operation violation notice: {e}")
+        flash("An error occurred while updating the notice. Please try again.", "danger")
+    finally:
+        conn.close()
+
+#Delete
+def delete_operation_violation(operation_violation_notice_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Operation_Violation_Law WHERE operation_violation_notice_id = ?", operation_violation_notice_id)
+        conn.commit()
+    except Exception as e:
+        print(f"Error deleting site visit notice: {e}")
+        flash("An error occurred while deleting the notice. Please try again.", "danger")
+    finally:
+        conn.close()
+
+#Lookup Functions
+
+# for drop down menu in violation notices page
+def lookup_Facility_Names():
+    facility_names = []
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT Facility_Name FROM Operation_Violation_Law")
+        facility_names = [row[0] for row in cursor.fetchall()]  # Extract the first element of each tuple
+    except Exception as e:
+        print(f"Error looking up Facilities: {e}")
+        flash("An error occurred while looking up Facilities", "danger")
+    finally:
+        if conn:
+            conn.close()
+    return facility_names
+
+# fill out drop down menu fields
+def read_operation_violation(facility_name):
+    operation_violations = []
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT Operation_Violation_Law_Id, Facility_Name, Create_DateTime FROM Operation_Violation_Law WHERE Facility_Name = ?", facility_name)
+        rows = cursor.fetchall()
+        for row in rows:
+            operation_violations.append({
+                'operation_violation_law_id': row[0],
+                'facility_name': row[1],
+                'create_datetime': row[2],
+            })
+    except Exception as e:
+        print(f"Error reading Operation Violations: {e}")
+        flash("An error occurred while reading Operation Violations", "danger")
+    finally:
+        if conn:
+            conn.close()
+    return operation_violations
+
+def lookup_Regional_Office_Name():
+    regional_offices = []
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT Regional_Office_Name FROM Regional_Office")
+        regional_offices = cursor.fetchall()  # Fetch all rows as tuples
+    except Exception as e:
+        print(f"Error looking up Regional Offices: {e}")
+        flash("An error occurred while looking up Regional Offices", "danger")
+    finally:
+        if conn:
+            conn.close()
+    
+    return regional_offices
+
+def lookup_Regional_Office_Info(office_name=None):
+    r_offices = []
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT Regional_Office_Name, Office_City, Office_Street_Address, Office_State, Office_Zip_Code, Office_Phone_Number, Regional_Office_Number FROM Regional_Office")
+        rows = cursor.fetchall()
+        if office_name:
+            # Filter rows based on the office_name
+            rows = [row for row in rows if row[0] == office_name]  # Access by integer index
+        for row in rows:
+            r_offices.append({
+                'name': row[0],  # Column 1: Regional_Office_Name
+                'city': row[1],  # Column 2: Office_City
+                'street_address': row[2],  # Column 3: Office_Street_Address
+                'state': row[3],  # Column 4: Office_State
+                'zip_code': row[4],  # Column 5: Office_Zip_Code
+                'phone_number': row[5],  # Column 6: Office_Phone_Number
+                'regional_office_number': row[6]
+            })
+    except Exception as e:
+        print(f"Error looking up Regional Offices: {e}")
+        flash("An error occurred while looking up Regional Offices", "danger")
+    finally:
+        if conn:
+            conn.close()
+    return r_offices
+
+def lookup_Regional_Office_Info_By_Office_Number(office_number):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT Regional_Office_Name, Office_City, Office_Street_Address, Office_State, Office_Zip_Code, Office_Phone_Number, Regional_Office_Number FROM Regional_Office WHERE Regional_Office_Number = ?", office_number )
+        regional_office = cursor.fetchone()
+    except Exception as e:
+        print(f"Error looking up Regional Office by Regional_Office_Number: {e}")
+        flash("An error occurred while looking up the Regional Office by Regional Office Number", "danger")
+    finally:
+        if conn:
+            conn.close()
+    return regional_office
+
+#Routing
+
+@app.route('/operationviolationnotice', methods=['GET', 'POST'])
+def operation_violation_notice():
+    regional_offices = lookup_Regional_Office_Name()  # Fetch regional offices
+
+    if request.method == 'POST':
+        data = {
+            'Facility_Name': request.form['Facility_Name'],
+            'Facility_Address': request.form['Facility_Address'],
+            'Facility_City': request.form['Facility_City'],
+            'Location_Label': request.form['Location_Label'],
+            'LPA_Manager_Signed_DateTime': request.form['LPA_Manager_Signed_DateTime'],
+            'Regional_Office_Number': request.form['Regional_Office_Number']  # Add Regional_Office_Id from form
+        }
+        insert_operation_violation_notice(data)
+        return redirect(url_for('list_operation_violation', Facility_Name=request.form['Facility_Name']))
+
+    return render_template('operationViolationNotice/operationviolationnotice.html', regional_offices=regional_offices, notice=None, mode=None)
+
+@app.route('/delete_notice/<int:operation_violation_notice_id>', methods=['POST'])
+def delete_operation_violation_notice(operation_violation_notice_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Operation_Violation_Law WHERE Operation_Violation_Law_Id = ?", operation_violation_notice_id)
+        conn.commit()
+        flash("Notice deleted successfully.", "success")
+    except Exception as e:
+        print(f"Error deleting operation violation notice: {e}")
+        flash("An error occurred while deleting the notice. Please try again.", "danger")
+    finally:
+        conn.close()
+    return redirect(url_for('list_operation_violation'))
+
+@app.route('/list_operation_violation_notices', methods=['GET', 'POST'])
+def list_operation_violation():
+    facility_name = request.form.get('facilityName') if request.method == 'POST' else request.args.get('facilityName')
+    notices = read_operation_violation(facility_name) if facility_name else []
+    facility_names = lookup_Facility_Names()
+    return render_template('operationViolationNotice/list_operation_violation_notices.html', notices=notices, facility_names=facility_names, facility_name=facility_name)
+
+
+@app.route('/api/regional-office-info/<office_name>', methods=['GET'])
+def get_office_details(office_name):
+    office_data = lookup_Regional_Office_Info(office_name)
+    if office_data:
+        return jsonify(office_data[0])  # Return the first item in the list
+    else:
+        flash("Office not found", "warning")  # Optional: Send a message back to the client
+        return jsonify({"error": "Office not found"}), 404
+    
+@app.route('/viewOperationViolation/<int:operation_violation_law_id>')
+def view_operation_violation_notice(operation_violation_law_id):
+    notice = read_single_operation_violation(operation_violation_law_id)
+    
+    # Assuming Original_Regional_Office_Number is part of notice data
+    original_regional_office_number = notice[4]
+    
+    #print(f"Original Regional Office Number: {original_regional_office_number}")
+    # Call lookup function to get regional office info
+    regional_office = lookup_Regional_Office_Info_By_Office_Number(original_regional_office_number)
+
+    #print(f"Regional Office Info: {regional_office}")
+    
+    return render_template('operationViolationNotice/operationviolationnotice.html', notice=notice, regional_office=regional_office, mode='view')
+
+@app.route('/updateOperationViolation/<int:operation_violation_law_id>', methods=['GET', 'POST'])
+def update_operation_violation_notice(operation_violation_law_id):
+    regional_offices = lookup_Regional_Office_Name()
+    if request.method == 'POST':
+        data = {
+            'Facility_Name': request.form['Facility_Name'],
+            'Facility_Address': request.form['Facility_Address'],
+            'Facility_City': request.form['Facility_City'],
+            'Location_Label': request.form['Location_Label'],
+            'LPA_Manager_Signed_DateTime': request.form['LPA_Manager_Signed_DateTime'],
+            'Regional_Office_Number': request.form['Regional_Office_Number']
+        }
+        edit_operation_violation_notice(operation_violation_law_id, data)
+        return redirect(url_for('list_operation_violation', Facility_Name=request.form['Facility_Name']))
+    notice=read_single_operation_violation(operation_violation_law_id)
+    return render_template('operationViolationNotice/operationviolationnotice.html', notice=notice, regional_offices=regional_offices, mode='edit')
+
+#--------------------------------------------------------------#
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
